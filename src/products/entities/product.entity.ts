@@ -3,7 +3,7 @@ import {Categories} from "../../types";
 
 @Entity()
 export class Product extends BaseEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
     @Column()
@@ -26,4 +26,7 @@ export class Product extends BaseEntity {
 
     @Column()
     productAddedToFavourite: number;
+
+    @Column()
+    productImage: string;
 }
