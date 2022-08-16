@@ -1,5 +1,6 @@
 export enum Categories {
     pizza = 'PIZZA',
-    salad = 'SALAD',
-
+    drink = 'DRINK',
+    burger = 'BURGER',
+    steak = 'STEAK'
 }
