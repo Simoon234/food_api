@@ -17,4 +17,13 @@ export class Product extends BaseEntity {
 
     @Column()
     productPrice: number;
+
+    @Column()
+    productQuantity: number;
+
+    @Column()
+    productOpinion: number;
+
+    @Column()
+    productAddedToFavourite: number;
 }
