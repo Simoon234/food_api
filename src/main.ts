@@ -3,6 +3,7 @@ import {AppModule} from './app.module';
 import {ValidationPipe} from '@nestjs/common';
 import helmet from 'helmet';
 import * as cookie from 'cookie-parser';
+import {serverHost} from "../db-config";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -26,6 +27,6 @@ async function bootstrap() {
     app.use(helmet());
     app.use(cookie());
 
-    await app.listen(3000);
+    await app.listen(serverHost);
 }
 bootstrap();
