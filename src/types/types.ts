@@ -1,4 +1,5 @@
 import {Product} from "src/products/entities/product.entity";
+import {Customer} from "../customers/entities/customer.entity";
 
 export enum Categories {
     pizza = 'PIZZA',
@@ -27,4 +28,17 @@ export interface CreateProductInterface {
     productPrice: number;
     productQuantity: number;
     productImage: string;
+}
+
+export interface CustomerResponse {
+    status: boolean;
+    customer: Customer | string;
+}
+
+export interface UpdateUser {
+    city: string;
+    country: string;
+    email: string;
+    firstName: string;
+    lastName: string;
 }
