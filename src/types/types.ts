@@ -42,3 +42,9 @@ export interface UpdateUser {
     firstName: string;
     lastName: string;
 }
+
+export enum TableType {
+    TWO = 2,
+    FOUR = 4,
+    SIX = 6
+}

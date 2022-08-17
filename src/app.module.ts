@@ -7,6 +7,7 @@ import {CustomersModule} from './customers/customers.module';
 import {DetailsCustomer} from "./customers/entities/details-customer.entity";
 import {Customer} from "./customers/entities/customer.entity";
 import {TableReservationModule} from './table-reservation/table-reservation.module';
+import {Reservation} from './table-reservation/entity/reservations.entity';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -16,7 +17,7 @@ import {TableReservationModule} from './table-reservation/table-reservation.modu
     username,
     password,
     database,
-    entities: [Product, Customer, DetailsCustomer],
+    entities: [Product, Customer, DetailsCustomer, Reservation],
     synchronize: true,
   }), ProductsModule, CustomersModule, TableReservationModule],
 })
