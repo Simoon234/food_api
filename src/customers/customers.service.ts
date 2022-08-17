@@ -1,26 +1,50 @@
-import {Injectable} from '@nestjs/common';
-import {CreateCustomerDto} from './dto/create-customer.dto';
-import {UpdateCustomerDto} from './dto/update-customer.dto';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {Customer} from './entities/customer.entity';
+import {CustomerResponse, Res, UpdateUser} from "../types";
+import {DetailsCustomer} from "./entities/details-customer.entity";
 
 @Injectable()
 export class CustomersService {
-  create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
-  }
+    async findOne(id: string): Promise<CustomerResponse> {
+        const customer = await Customer.findOne({where: {id}, relations: ['details']});
 
-  findAll() {
-    return `This action returns all customers`;
-  }
+        return {
+            status: customer !== null,
+            customer: customer ?? 'No user found.'
+        }
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
-  }
+    //finish type
+    async updateCustomer(id: string, {city, country, email, firstName, lastName}: UpdateUser): Promise<Res> {
+        let user;
+        const customer = await Customer.findOne({where: {id}, relations: ['details']});
 
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
-  }
+        if (!customer) {
+            throw new HttpException('No customer found', HttpStatus.BAD_REQUEST);
+        }
 
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
-  }
+        const detailsCustomer = await DetailsCustomer.findOne({where: {id: customer.details.id}});
+
+        customer.firstName = firstName;
+        customer.lastName = lastName;
+        customer.email = email;
+        detailsCustomer.country = country
+        detailsCustomer.city = city;
+
+        //to verify...
+        if (firstName === '' || lastName === '' || email === '' || country === '' || city === '') {
+            return;
+        }
+
+        await customer.save();
+        await detailsCustomer.save();
+
+        return {
+            status: true
+        }
+    }
+
+    remove(id: number) {
+        return `This action removes a #${id} customer`;
+    }
 }
