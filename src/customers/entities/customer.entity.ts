@@ -1,8 +1,8 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
-import {Details} from "./details-customer.entity";
+import {BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {DetailsCustomer} from "./details-customer.entity";
 
 @Entity()
-export class Customer {
+export class Customer extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -15,8 +15,8 @@ export class Customer {
     @Column({nullable: false})
     email: string;
 
-    @OneToOne(() => Details)
+    @OneToOne(() => DetailsCustomer)
     @JoinColumn()
-    details: Details;
+    details: DetailsCustomer;
 
 }
