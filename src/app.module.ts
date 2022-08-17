@@ -4,6 +4,8 @@ import {database, password, username} from "../db-config";
 import {Product} from './products/entities/product.entity';
 import {ProductsModule} from './products/products.module';
 import {CustomersModule} from './customers/customers.module';
+import {DetailsCustomer} from "./customers/entities/details-customer.entity";
+import {Customer} from "./customers/entities/customer.entity";
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -13,7 +15,7 @@ import {CustomersModule} from './customers/customers.module';
     username,
     password,
     database,
-    entities: [Product],
+    entities: [Product, Customer, DetailsCustomer],
     synchronize: true,
   }), ProductsModule, CustomersModule],
 })
