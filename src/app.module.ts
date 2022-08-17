@@ -3,6 +3,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {database, password, username} from "../db-config";
 import {Product} from './products/entities/product.entity';
 import {ProductsModule} from './products/products.module';
+import {CustomersModule} from './customers/customers.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -14,6 +15,6 @@ import {ProductsModule} from './products/products.module';
     database,
     entities: [Product],
     synchronize: true,
-  }), ProductsModule],
+  }), ProductsModule, CustomersModule],
 })
 export class AppModule {}
