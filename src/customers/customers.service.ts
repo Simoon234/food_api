@@ -43,8 +43,4 @@ export class CustomersService {
             status: true
         }
     }
-
-    remove(id: number) {
-        return `This action removes a #${id} customer`;
-    }
 }
