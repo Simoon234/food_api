@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Patch} from '@nestjs/common';
+import {Body, Controller, Get, Param, Patch} from '@nestjs/common';
 import {CustomersService} from './customers.service';
 import {CustomerResponse, UpdateUser} from "../types";
 
@@ -15,10 +15,5 @@ export class CustomersController {
   @Get('/details/:id')
   findOne(@Param('id') id: string): Promise<CustomerResponse> {
     return this.customersService.findOne(id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.customersService.remove(+id);
   }
 }
