@@ -19,4 +19,9 @@ export class TableReservationController {
     ) {
         return this.tables.reserveTable(id, reservation)
     }
+
+    @Get('/change-status/:id')
+    changeStatus(@Param('id') id: string) {
+        return this.tables.changedTableStatus(id)
+    }
 }
