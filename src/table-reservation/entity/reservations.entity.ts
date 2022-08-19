@@ -7,7 +7,7 @@ export class Reservation extends BaseEntity {
     id: string;
 
     @Column('date')
-    reservationDate: Date | string;
+    reservationDate: Date;
 
     @Column()
     reservationPassword: string;
