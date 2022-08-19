@@ -1,32 +1,36 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {Categories} from "../../types";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Categories } from "../../types";
+import { BasketEntity } from "../../basket/entities/basket.entity";
 
 @Entity()
 export class Product extends BaseEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column()
-    productName: string;
+  @Column()
+  productName: string;
 
-    @Column({
-        type: 'enum',
-        enum: Categories
-    })
-    productCategory: string
+  @Column({
+    type: "enum",
+    enum: Categories
+  })
+  productCategory: string;
 
-    @Column()
-    productPrice: number;
+  @Column()
+  productPrice: number;
 
-    @Column()
-    productQuantity: number;
+  @Column()
+  productQuantity: number;
 
-    @Column()
-    productOpinion: number;
+  @Column()
+  productOpinion: number;
 
-    @Column()
-    productAddedToFavourite: number;
+  @Column()
+  productAddedToFavourite: number;
 
-    @Column()
-    productImage: string;
+  @Column()
+  productImage: string;
+
+  @OneToMany(() => BasketEntity, (entity) => entity.productItems)
+  productsInBasket: BasketEntity[];
 }
