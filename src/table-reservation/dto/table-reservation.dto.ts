@@ -1,4 +1,4 @@
-import {IsNumber, IsString} from "class-validator";
+import {IsDate, IsNumber, IsString} from "class-validator";
 
 export class TableReservationDto {
 
@@ -8,6 +8,6 @@ export class TableReservationDto {
     @IsNumber()
     chosenNumberOfTable: number;
 
-    @IsString()
-    reservationDate: string;
+    @IsDate()
+    reservationDate: Date;
 }

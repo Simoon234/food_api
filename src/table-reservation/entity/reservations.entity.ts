@@ -6,8 +6,8 @@ export class Reservation extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column()
-    reservationDate: string;
+    @Column('date')
+    reservationDate: Date | string;
 
     @Column()
     reservationPassword: string;
