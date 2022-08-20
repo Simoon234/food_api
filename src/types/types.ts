@@ -47,6 +47,7 @@ export interface BasketReturnValue {
   productId: string;
   quantity: number;
   userId: string;
+  price: number;
 }
 
 export interface FindOneInterface {
