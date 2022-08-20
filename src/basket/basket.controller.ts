@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Res } from "@nestjs/common";
 import { BasketService } from "./basket.service";
 import { BasketReturnValue } from "../types";
 
@@ -30,4 +30,9 @@ export class BasketController {
   // remove(@Param('id') id: string) {
   //   return this.basketService.remove(+id);
   // }
+
+  @Get("checkout-payment/:id")
+  test(@Res() res: any, @Param("id") id: string) {
+    return this.basketService.checkout(res, id);
+  }
 }

@@ -1,11 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { BasketEntity } from "./entities/basket.entity";
 import { BasketReturnValue, FindOneInterface } from "../types";
 import { Product } from "../products/entities/product.entity";
 import { Customer } from "src/customers/entities/customer.entity";
+import { Stripe } from "stripe";
 
 @Injectable()
 export class BasketService {
+  constructor(@Inject("STRIPE_CLIENT") private stripe: Stripe) {
+  }
+
   private static basketFilter(obj: BasketEntity) {
     return {
       id: obj.id,
@@ -111,5 +115,35 @@ export class BasketService {
       .map((item) => item.productItems.productPrice * item.quantity * 1.23)
       .reduce((curr, prev) => curr + prev, 0)
       .toFixed(2);
+  }
+
+  async checkout(res: any, id: string) {
+    const { basket } = await this.getBasket(id);
+
+    const session = await this.stripe.checkout.sessions.create({
+      payment_method_types: ["card", "blik"],
+      line_items: basket.map((item) => {
+        return {
+          price_data: {
+            currency: "pln",
+            product_data: {
+              name: item.product.productName,
+              images: [item.product.productImage]
+            },
+            unit_amount: item.product.productPrice * 100,
+            tax_behavior: "exclusive"
+          },
+          quantity: item.quantity
+        };
+      }),
+      automatic_tax: {
+        enabled: true
+      },
+      mode: "payment",
+      success_url: `https://wp.pl/success.html`,
+      cancel_url: `https://onet.pl`
+    });
+
+    res.redirect(303, session.url);
   }
 }
