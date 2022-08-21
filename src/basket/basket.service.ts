@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { BasketEntity } from "./entities/basket.entity";
-import { BasketReturnValue, FindOneInterface } from "../types";
+import { BasketReturnValue, FindOneInterface, Res } from "../types";
 import { Product } from "../products/entities/product.entity";
 import { Customer } from "src/customers/entities/customer.entity";
 import { Stripe } from "stripe";
@@ -145,5 +145,66 @@ export class BasketService {
     });
 
     res.redirect(303, session.url);
+  }
+
+  async removeProductFromBasket(
+    userId: string,
+    basketId: string
+  ): Promise<Res> {
+    const user = await Customer.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new HttpException("No user found", HttpStatus.NOT_FOUND);
+    }
+
+    const basket = await BasketEntity.findOne({
+      where: {
+        id: basketId,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName
+        }
+      }
+    });
+
+    if (basket) {
+      await basket.remove();
+      return {
+        status: true
+      };
+    } else {
+      return {
+        status: false,
+        message: "Error..."
+      };
+    }
+  }
+
+  async clearBasket(userId: string): Promise<Res> {
+    const user = await Customer.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new HttpException("No user found", HttpStatus.NOT_FOUND);
+    }
+
+    const basket = await BasketEntity.createQueryBuilder()
+      .delete()
+      .from(BasketEntity)
+      .where("user = :user", {
+        user: userId
+      })
+      .execute();
+
+    if (basket.affected <= 0) {
+      return {
+        status: false,
+        message: "Basket is empty..."
+      };
+    } else {
+      return {
+        status: true
+      };
+    }
   }
 }

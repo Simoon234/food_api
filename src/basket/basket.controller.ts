@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Res } from "@nestjs/common";
 import { BasketService } from "./basket.service";
 import { BasketReturnValue } from "../types";
 
@@ -26,13 +26,18 @@ export class BasketController {
     return this.basketService.getTotalBasketPrice(id);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.basketService.remove(+id);
-  // }
+  @Delete("/delete-product/:basketId/:userId")
+  remove(@Param("userId") userId: string, @Param("basketId") basketId: string) {
+    return this.basketService.removeProductFromBasket(userId, basketId);
+  }
 
   @Get("checkout-payment/:id")
-  test(@Res() res: any, @Param("id") id: string) {
+  checkout(@Res() res: any, @Param("id") id: string) {
     return this.basketService.checkout(res, id);
+  }
+
+  @Get("/clear-basket/:userId")
+  clearBasket(@Param("userId") userId: string) {
+    return this.basketService.clearBasket(userId);
   }
 }

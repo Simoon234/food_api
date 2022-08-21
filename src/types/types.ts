@@ -16,6 +16,7 @@ export interface AllProducts {
 
 export interface Res {
   status: boolean;
+  message?: string;
 }
 
 export interface ResSingleProduct {
