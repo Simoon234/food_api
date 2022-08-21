@@ -12,6 +12,7 @@ import { ReservationDetails } from "./table-reservation/entity/reservation-detai
 import { BasketModule } from "./basket/basket.module";
 import { BasketEntity } from "./basket/entities/basket.entity";
 import { StripeModule } from "./stripe/stripe.module";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { StripeModule } from "./stripe/stripe.module";
     TableReservationModule,
     BasketModule,
     StripeModule,
-    StripeModule.forRoot(key, { apiVersion: "2022-08-01" })
+    StripeModule.forRoot(key, { apiVersion: "2022-08-01" }),
+    AuthModule
   ],
 })
 export class AppModule {}
