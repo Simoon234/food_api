@@ -72,8 +72,10 @@ export class BasketService {
     };
   }
 
-  async getBasket(id: string) {
-    const user = await Customer.findOne({ where: { id } });
+  async getBasket(person) {
+    const user = await Customer.findOne({
+      where: { email: person.email }
+    });
 
     if (!user) {
       throw new HttpException("There is no user", HttpStatus.BAD_REQUEST);
