@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { DetailsCustomer } from "./details-customer.entity";
 import { BasketEntity } from "../../basket/entities/basket.entity";
+import { Role } from "../../types";
 
 @Entity()
 export class Customer extends BaseEntity {
@@ -21,6 +22,9 @@ export class Customer extends BaseEntity {
 
   @Column()
   photos: string;
+
+  @Column({ type: "enum", enum: Role, default: Role.CUSTOMER })
+  roles: Role.CUSTOMER;
 
   @OneToOne(() => DetailsCustomer)
   @JoinColumn()

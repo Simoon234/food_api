@@ -1,8 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
-import { Res } from "../types";
+import { Res, Role } from "../types";
+import { Roles } from "../decorators/roles.decorator";
+import { RolesGuard } from "src/auth/guards/roles.guard";
+import { JwtGuard } from "../auth/guards/jwt.guard";
 
 @Controller("/product")
 export class ProductsController {
@@ -14,13 +17,15 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @Get('/all')
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Get("/all")
   getAllProducts() {
     return this.productsService.getAllProducts();
   }
 
-  @Get('/info/:id')
-  findOne(@Param('id') id: string) {
+  @Get("/info/:id")
+  findOne(@Param("id") id: string) {
     return this.productsService.findOne(id);
   }
 

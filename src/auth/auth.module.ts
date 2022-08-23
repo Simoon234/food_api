@@ -18,7 +18,11 @@ dotenv.config();
     })
   ],
   controllers: [AuthController],
-  providers: [GoogleStrategy, JsonAuthStrategy, AuthService],
+  providers: [
+    GoogleStrategy,
+    JsonAuthStrategy,
+    AuthService
+  ],
   exports: [AuthService]
 })
 export class AuthModule {

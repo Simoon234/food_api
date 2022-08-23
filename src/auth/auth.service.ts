@@ -3,6 +3,7 @@ import { Customer } from "../customers/entities/customer.entity";
 import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "./strategies/json-auth-strategy";
 import { Response } from "express";
+import { Role } from "src/types";
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,8 @@ export class AuthService {
         const { accessToken } = await this.login({
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email
+          email: user.email,
+          role: Role.CUSTOMER
         });
 
         user.accessToken = accessToken;
@@ -79,7 +81,7 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      photos: user.photos
+      role: user.role
     };
 
     return {

@@ -3,6 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt";
 import * as dotenv from "dotenv";
 import { SECRET_JWT_KEY } from "../../../db-config";
+import { Role } from "src/types";
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ export type JwtPayload = {
   firstName: string;
   lastName: string;
   email: string;
-  photos: string;
+  role: Role;
 };
 
 @Injectable()
@@ -27,7 +28,7 @@ export class JsonAuthStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  async validate({ email, firstName, lastName, photos }: JwtPayload) {
-    return { email, firstName, lastName, photos };
+  async validate({ email, firstName, lastName, role }: JwtPayload) {
+    return { email, firstName, lastName, role };
   }
 }

@@ -19,7 +19,6 @@ export interface Res {
   message?: string;
 }
 
-
 export interface ResSingleProduct {
   status: boolean;
   singleProduct: Product | string;
@@ -66,3 +65,9 @@ export interface User {
   accessToken: string;
   picture: string;
 }
+
+export enum Role {
+  CUSTOMER = "CUSTOMER",
+  ADMIN = "ADMIN",
+}
+
