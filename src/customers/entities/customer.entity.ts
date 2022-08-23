@@ -16,6 +16,12 @@ export class Customer extends BaseEntity {
   @Column({ nullable: false })
   email: string;
 
+  @Column({ default: null, nullable: true })
+  accessToken: string;
+
+  @Column()
+  photos: string;
+
   @OneToOne(() => DetailsCustomer)
   @JoinColumn()
   details: DetailsCustomer;
