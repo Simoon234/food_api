@@ -1,27 +1,27 @@
-import {Body, Controller, Get, Param, Post} from '@nestjs/common';
-import {TableReservationService} from "./table-reservation.service";
-import {TableReservationDto} from "./dto/table-reservation.dto";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { TableReservationService } from "./table-reservation.service";
+import { TableReservationDto } from "./dto/table-reservation.dto";
 
-@Controller('table-reservation')
+@Controller("table-reservation")
 export class TableReservationController {
-    constructor(private tables: TableReservationService) {
-    }
+  constructor(private tables: TableReservationService) {
+  }
 
-    @Get('/available')
-    getAllAvailableTables() {
-        return this.tables.getAllAvailableTables();
-    }
+  @Get("/available")
+  getAllAvailableTables() {
+    return this.tables.getAllAvailableTables();
+  }
 
-    @Post('/reserve/:id')
-    reserveTable(
-        @Param('id') id: string,
-        @Body() reservation: TableReservationDto
-    ) {
-        return this.tables.reserveTable(id, reservation)
-    }
+  @Post("/reserve/:id")
+  reserveTable(
+    @Param("id") id: string,
+    @Body() reservation: TableReservationDto
+  ) {
+    return this.tables.reserveTable(id, reservation);
+  }
 
-    @Get('/change-status/:id')
-    changeStatus(@Param('id') id: string) {
-        return this.tables.changedTableStatus(id)
-    }
+  @Get("/change-status/:id")
+  changeStatus(@Param("id") id: string) {
+    return this.tables.changedTableStatus(id);
+  }
 }
