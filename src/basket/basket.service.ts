@@ -4,10 +4,14 @@ import { BasketReturnValue, FindOneInterface, Res } from "../types";
 import { Product } from "../products/entities/product.entity";
 import { Customer } from "src/customers/entities/customer.entity";
 import { Stripe } from "stripe";
+import { AdminService } from "src/admin/admin.service";
 
 @Injectable()
 export class BasketService {
-  constructor(@Inject("STRIPE_CLIENT") private stripe: Stripe) {
+  constructor(
+    @Inject("STRIPE_CLIENT") private stripe: Stripe,
+    private adminService: AdminService
+  ) {
   }
 
   private static basketFilter(obj: BasketEntity) {
@@ -72,9 +76,9 @@ export class BasketService {
     };
   }
 
-  async getBasket(person) {
+  async getBasket(id) {
     const user = await Customer.findOne({
-      where: { email: person.email }
+      where: { id }
     });
 
     if (!user) {
@@ -141,11 +145,61 @@ export class BasketService {
       automatic_tax: {
         enabled: true
       },
+      shipping_address_collection: {
+        allowed_countries: ["PL"]
+      },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: 0,
+              currency: "pln"
+            },
+            tax_behavior: "exclusive",
+            display_name: "Free shipping",
+            // Delivers between 5-7 business days
+            delivery_estimate: {
+              minimum: {
+                unit: "business_day",
+                value: 5
+              },
+              maximum: {
+                unit: "business_day",
+                value: 7
+              }
+            }
+          }
+        },
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: 1500,
+              currency: "pln"
+            },
+            tax_behavior: "exclusive",
+            display_name: "Next day air",
+            delivery_estimate: {
+              minimum: {
+                unit: "business_day",
+                value: 1
+              },
+              maximum: {
+                unit: "business_day",
+                value: 1
+              }
+            }
+          }
+        }
+      ],
+      allow_promotion_codes: true,
       mode: "payment",
       success_url: `https://wp.pl/success.html`,
       cancel_url: `https://onet.pl`
     });
 
+    await this.clearBasket(id);
     res.redirect(303, session.url);
   }
 
