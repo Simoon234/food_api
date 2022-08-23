@@ -19,6 +19,7 @@ export interface Res {
   message?: string;
 }
 
+
 export interface ResSingleProduct {
   status: boolean;
   singleProduct: Product | string;
@@ -55,4 +56,13 @@ export interface FindOneInterface {
   id: string;
   name: string;
   email: string;
+}
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  accessToken: string;
+  picture: string;
 }
