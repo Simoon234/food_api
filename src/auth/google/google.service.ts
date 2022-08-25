@@ -1,9 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Customer } from "../../customers/entities/customer.entity";
 import { JwtService } from "@nestjs/jwt";
-import { JwtPayload } from "../strategies/json-auth-strategy";
 import { Response } from "express";
-import { Role } from "src/types";
+import { createToken } from "../common/createToken";
 
 @Injectable()
 export class GoogleService {
@@ -23,11 +22,12 @@ export class GoogleService {
         user.email = obj.email;
         user.photos = obj.picture;
 
-        const { accessToken } = await this.login({
+        const { accessToken } = await createToken({
+          id: user.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          role: Role.CUSTOMER
+          role: user.roles
         });
 
         user.accessToken = accessToken;
@@ -54,10 +54,12 @@ export class GoogleService {
       }
 
       if (getUser.accessToken === null || getUser.accessToken === "") {
-        const { accessToken } = await this.login({
+        const { accessToken } = await createToken({
+          id: getUser.id,
           firstName: getUser.firstName,
           lastName: getUser.lastName,
-          email: getUser.email
+          email: getUser.email,
+          role: getUser.roles
         });
         getUser.accessToken = accessToken;
         await getUser.save();
@@ -74,19 +76,6 @@ export class GoogleService {
     } catch (e) {
       console.error(e.message);
     }
-  }
-
-  async login(user) {
-    const payload: JwtPayload = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role
-    };
-
-    return {
-      accessToken: this.jwtService.sign(payload)
-    };
   }
 
   async logout(person, res: Response) {
