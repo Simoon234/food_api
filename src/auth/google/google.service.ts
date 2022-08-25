@@ -1,12 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Customer } from "../customers/entities/customer.entity";
+import { Customer } from "../../customers/entities/customer.entity";
 import { JwtService } from "@nestjs/jwt";
-import { JwtPayload } from "./strategies/json-auth-strategy";
+import { JwtPayload } from "../strategies/json-auth-strategy";
 import { Response } from "express";
 import { Role } from "src/types";
 
 @Injectable()
-export class AuthService {
+export class GoogleService {
   constructor(@Inject(JwtService) private jwtService: JwtService) {
   }
 

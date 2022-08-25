@@ -1,14 +1,14 @@
 import { Controller, Get, Inject, Res, UseGuards } from "@nestjs/common";
-import { GoogleAuth } from "./guards/google.guard";
-import { Person } from "../decorators/person.decorator";
-import { AuthService } from "./auth.service";
+import { GoogleAuth } from "../guards/google.guard";
+import { Person } from "../../decorators/person.decorator";
+import { GoogleService } from "./google.service";
 import { Response } from "express";
-import { JwtGuard } from "./guards/jwt.guard";
-import { User } from "../types";
+import { JwtGuard } from "../guards/jwt.guard";
+import { User } from "../../types";
 
 @Controller("/google")
-export class AuthController {
-  constructor(@Inject(AuthService) private authService: AuthService) {
+export class GoogleController {
+  constructor(@Inject(GoogleService) private authService: GoogleService) {
   }
 
   @Get("/")
