@@ -71,3 +71,7 @@ export enum Role {
   ADMIN = "ADMIN",
 }
 
+export interface Coupon {
+  name: string;
+  percent_off: number;
+}

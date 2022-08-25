@@ -1,10 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post } from "@nestjs/common";
 import { AdminService } from "./admin.service";
-
-interface Coupon {
-  name: string;
-  percent_off: number;
-}
+import { Coupon } from "../types";
 
 @Controller("/admin")
 export class AdminController {
