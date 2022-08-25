@@ -54,10 +54,12 @@ export class AuthService {
       }
 
       if (getUser.accessToken === null || getUser.accessToken === "") {
-        const { accessToken } = await this.login({
+        const { accessToken } = await createToken({
+          id: getUser.id,
           firstName: getUser.firstName,
           lastName: getUser.lastName,
-          email: getUser.email
+          email: getUser.email,
+          role: getUser.roles
         });
         getUser.accessToken = accessToken;
         await getUser.save();
@@ -74,18 +76,6 @@ export class AuthService {
     } catch (e) {
       console.error(e.message);
     }
-  }
-
-  async login(user) {
-    const payload: JwtPayload = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    };
-
-    return {
-      accessToken: this.jwtService.sign(payload)
-    };
   }
 
   async logout(person, res: Response) {

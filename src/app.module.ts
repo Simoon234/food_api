@@ -13,6 +13,7 @@ import { BasketModule } from "./basket/basket.module";
 import { BasketEntity } from "./basket/entities/basket.entity";
 import { StripeModule } from "./stripe/stripe.module";
 import { AuthModule } from "./auth/auth.module";
+import { LocalModule } from "./local/local.module";
 import { AdminModule } from "./admin/admin.module";
 
 @Module({
@@ -40,6 +41,8 @@ import { AdminModule } from "./admin/admin.module";
     BasketModule,
     StripeModule,
     StripeModule.forRoot(key, { apiVersion: "2022-08-01" }),
+    AuthModule,
+    LocalModule
     AuthModule,
     AdminModule
   ],
