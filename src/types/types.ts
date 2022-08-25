@@ -36,12 +36,20 @@ export interface CustomerResponse {
   customer: Customer | string;
 }
 
+export interface PersonInterface {
+  id: string;
+  accessToken: string;
+  role: Role;
+}
+
 export interface UpdateUser {
   city: string;
   country: string;
   email: string;
   firstName: string;
   lastName: string;
+  photo: string;
+  phoneNumber: number;
 }
 
 export interface BasketReturnValue {
@@ -64,6 +72,7 @@ export interface User {
   email: string;
   accessToken: string;
   picture: string;
+  password: string;
 }
 
 export enum Role {
