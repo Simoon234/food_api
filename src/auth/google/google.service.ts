@@ -1,12 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Customer } from "../customers/entities/customer.entity";
 import { JwtService } from "@nestjs/jwt";
-import { JwtPayload } from "./strategies/json-auth-strategy";
 import { Response } from "express";
-import { Role } from "src/types";
+import { Customer } from "../../customers/entities/customer.entity";
+import { token } from "../common/createToken";
+import { generateToken } from "../common/generateToken";
 
 @Injectable()
-export class AuthService {
+export class GoogleService {
   constructor(@Inject(JwtService) private jwtService: JwtService) {
   }
 
@@ -23,14 +23,12 @@ export class AuthService {
         user.email = obj.email;
         user.photos = obj.picture;
 
-        const { accessToken } = await this.login({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: Role.CUSTOMER
-        });
+        const accessToken = token(
+          await generateToken(user),
+          user.id,
+          user.email
+        );
 
-        user.accessToken = accessToken;
         await user.save();
 
         customer = {
@@ -42,7 +40,7 @@ export class AuthService {
         };
 
         res
-          .cookie("jwt", customer?.accessToken, {
+          .cookie("jwt", accessToken.accessToken, {
             secure: false,
             domain: "localhost",
             httpOnly: true
@@ -53,17 +51,8 @@ export class AuthService {
           });
       }
 
-      if (getUser.accessToken === null || getUser.accessToken === "") {
-        const { accessToken } = await createToken({
-          id: getUser.id,
-          firstName: getUser.firstName,
-          lastName: getUser.lastName,
-          email: getUser.email,
-          role: getUser.roles
-        });
-        getUser.accessToken = accessToken;
-        await getUser.save();
-
+      if (getUser.accessToken === null) {
+        token(await generateToken(getUser), getUser.id, getUser.email);
         res.json({
           message: "Logged in"
         });
@@ -81,7 +70,7 @@ export class AuthService {
   async logout(person, res: Response) {
     try {
       const customer = await Customer.findOne({
-        where: { email: person.email, firstName: person.firstName }
+        where: { email: person.email, id: person.id }
       });
       customer.accessToken = null;
       await customer.save();

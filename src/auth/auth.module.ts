@@ -3,11 +3,11 @@ import { GoogleController } from "./google/google.controller";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { JsonAuthStrategy } from "./strategies/json-auth-strategy";
 import { JwtModule } from "@nestjs/jwt";
-import { GoogleService } from "./google/google.service";
 import * as dotenv from "dotenv";
 import { PassportModule } from "@nestjs/passport";
 import { SECRET_JWT_KEY } from "../../db-config";
 import { LocalModule } from "./local/local.module";
+import { GoogleService } from "./google/google.service";
 
 dotenv.config();
 

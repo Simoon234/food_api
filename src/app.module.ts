@@ -42,7 +42,7 @@ import { AdminModule } from "./admin/admin.module";
     StripeModule,
     StripeModule.forRoot(key, { apiVersion: "2022-08-01" }),
     AuthModule,
-    LocalModule
+    LocalModule,
     AuthModule,
     AdminModule
   ],

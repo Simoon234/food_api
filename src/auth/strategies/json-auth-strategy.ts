@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt";
 import * as dotenv from "dotenv";
 import { SECRET_JWT_KEY } from "../../../db-config";
-import { Role } from "src/types";
+import { Customer } from "../../customers/entities/customer.entity";
 
 dotenv.config();
 
@@ -11,13 +11,6 @@ function cookieExtract(req: any): null | string {
   return req && req.cookies ? req.cookies?.jwt ?? null : null;
 }
 
-export type JwtPayload = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: Role;
-};
 
 @Injectable()
 export class JsonAuthStrategy extends PassportStrategy(Strategy, "jwt") {
@@ -29,15 +22,9 @@ export class JsonAuthStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  async validate(
-    { email, firstName, lastName, id }: JwtPayload,
-    done: (err, customers) => void
-  ) {
-    if (!email || !firstName || !lastName) {
-      return done(new UnauthorizedException(), false);
-    }
+  async validate(payload: any, done: (err, customers) => void) {
     const customers = await Customer.findOne({
-      where: { email, firstName, lastName, id }
+      where: { accessToken: payload.id }
     });
 
     if (!customers) {

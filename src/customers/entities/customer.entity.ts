@@ -21,7 +21,7 @@ export class Customer extends BaseEntity {
   password: string;
 
   @Column({ default: null, nullable: true })
-  accessToken: string;
+  accessToken: string | null;
 
   @Column()
   photos: string;

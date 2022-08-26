@@ -4,9 +4,10 @@ import { PersonInterface, User } from "../../types";
 import { hashPassword, verifyPassword } from "../../utils/hashPassword";
 import { LogDto } from "./dto/log.dto";
 import { Response } from "express";
-import { createToken } from "../common/createToken";
 import { logout } from "../common/logout";
 import { DetailsCustomer } from "src/customers/entities/details-customer.entity";
+import { token } from "../common/createToken";
+import { generateToken } from "../common/generateToken";
 
 @Injectable()
 export class LocalService {
@@ -57,19 +58,15 @@ export class LocalService {
       if (!comparePwd)
         throw new HttpException("Password do not match", HttpStatus.CONFLICT);
 
-      const { accessToken } = await createToken({
-        id: findUser.id,
-        email: findUser.email,
-        firstName: findUser.firstName,
-        lastName: findUser.lastName,
-        role: findUser.roles
-      });
+      const accessToken = token(
+        await generateToken(findUser),
+        findUser.id,
+        findUser.email
+      );
 
-      findUser.accessToken = accessToken;
-      await findUser.save();
 
       res
-        .cookie("jwt", accessToken, {
+        .cookie("jwt", accessToken.accessToken, {
           secure: false,
           domain: "localhost",
           httpOnly: true
