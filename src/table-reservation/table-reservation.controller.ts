@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { TableReservationService } from "./table-reservation.service";
 import { TableReservationDto } from "./dto/table-reservation.dto";
+import { Person } from "../decorators/person.decorator";
+import { JwtGuard } from "src/auth/guards/jwt.guard";
 
 @Controller("table-reservation")
 export class TableReservationController {
@@ -12,12 +14,13 @@ export class TableReservationController {
     return this.tables.getAllAvailableTables();
   }
 
-  @Post("/reserve/:id")
+  @UseGuards(JwtGuard)
+  @Post("/reserve")
   reserveTable(
-    @Param("id") id: string,
+    @Person() person: any,
     @Body() reservation: TableReservationDto
   ) {
-    return this.tables.reserveTable(id, reservation);
+    return this.tables.reserveTable(person, reservation);
   }
 
   @Get("/change-status/:id")

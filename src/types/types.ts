@@ -12,6 +12,7 @@ export interface AllProducts {
   message?: string;
   status: boolean;
   allProducts?: Product[];
+  totalPages?: number;
 }
 
 export interface Res {
@@ -53,10 +54,11 @@ export interface UpdateUser {
 }
 
 export interface BasketReturnValue {
-  productId: string;
+  id: string;
   quantity: number;
-  userId: string;
-  price: number;
+  productPrice: number;
+  productName: string;
+  productImage: string;
 }
 
 export interface FindOneInterface {
@@ -76,8 +78,8 @@ export interface User {
 }
 
 export enum Role {
-  CUSTOMER = "CUSTOMER",
-  ADMIN = "ADMIN",
+  customer = "CUSTOMER",
+  admin = "ADMIN",
 }
 
 export interface Coupon {

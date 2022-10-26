@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { Coupon } from "../types";
+import { ShopDto } from "./dto/shop.dto";
 
 @Controller("/admin")
 export class AdminController {
@@ -30,5 +31,15 @@ export class AdminController {
   @Delete("/remove-coupon/:id")
   async removeCoupon(@Param("id") id: string) {
     return this.adminService.removeCoupon(id);
+  }
+
+  @Get("/shop-details")
+  shopDetails() {
+    return this.adminService.shopDetails();
+  }
+
+  @Post("/create-new-shop-details")
+  addressDetails(@Body() obj: ShopDto) {
+    return this.adminService.createShopDetails(obj);
   }
 }

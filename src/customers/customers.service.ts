@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Customer } from "./entities/customer.entity";
 import { CustomerResponse, Res, UpdateUser } from "../types";
 import { DetailsCustomer } from "./entities/details-customer.entity";
+import { Product } from "src/products/entities/product.entity";
 
 @Injectable()
 export class CustomersService {
@@ -98,6 +99,36 @@ export class CustomersService {
 
     return {
       status: true
+    };
+  }
+
+  async addToFavorite(productId: string, person: any) {
+    const pro = await Product.findOne({
+      where: { id: productId },
+      relations: ["fav"]
+    });
+    pro.fav = person;
+    await pro.save();
+
+    return {
+      message: "Added"
+    };
+  }
+
+  async listOfFavorites(person: any) {
+    return await Product.find({ relations: ["fav"], where: { fav: person } });
+  }
+
+  async removeProduct(productId: string) {
+    const pro = await Product.findOne({
+      where: { id: productId },
+      relations: ["fav"]
+    });
+    pro.fav = null;
+    await pro.save();
+
+    return {
+      message: "Removed"
     };
   }
 }

@@ -1,21 +1,24 @@
-import {Customer} from "src/customers/entities/customer.entity";
-import {BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import { Customer } from "src/customers/entities/customer.entity";
+import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Reservation extends BaseEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column('date')
-    reservationDate: Date;
+  @Column()
+  reservationDate: string;
 
-    @Column()
-    reservationPassword: string;
+  @Column()
+  time: string;
 
-    @Column()
-    tableType: number;
+  @Column()
+  reservationPassword: string;
 
-    @OneToOne(() => Customer)
-    @JoinColumn()
-    reservedBy: Customer;
+  @Column()
+  tableType: number;
+
+  @OneToOne(() => Customer)
+  @JoinColumn()
+  reservedBy: Customer;
 }

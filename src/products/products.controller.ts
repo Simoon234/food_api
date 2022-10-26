@@ -1,11 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
-import { Res, Role } from "../types";
-import { Roles } from "../decorators/roles.decorator";
-import { RolesGuard } from "src/auth/guards/roles.guard";
-import { JwtGuard } from "../auth/guards/jwt.guard";
+import { Res } from "../types";
 
 @Controller("/product")
 export class ProductsController {
@@ -17,11 +14,13 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  @Get("/all")
-  getAllProducts() {
-    return this.productsService.getAllProducts();
+  @Get("/all/:currentPage/:maxItem/:category")
+  getAllProducts(
+    @Param("currentPage") currentPage: number,
+    @Param("maxItem") maxItem: number,
+    @Param("category") category: string
+  ) {
+    return this.productsService.getAllProducts(currentPage, maxItem, category);
   }
 
   @Get("/info/:id")
@@ -37,8 +36,14 @@ export class ProductsController {
     return this.productsService.updateProduct(id, updateProductDto);
   }
 
-  @Delete('/remove/:id')
-  async remove(@Param('id') id: string) {
+  @Delete("/remove/:id")
+  async remove(@Param("id") id: string) {
     return this.productsService.deleteById(id);
   }
+
+  @Get("/most-time-bought")
+  mostTimeBought() {
+    return this.productsService.mostTimeBought();
+  }
+
 }

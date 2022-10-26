@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { Product } from "./entities/product.entity";
-import { AllProducts, Res, ResSingleProduct } from "../types";
+import { Res, ResSingleProduct } from "../types";
 
 @Injectable()
 export class ProductsService {
@@ -52,19 +52,49 @@ export class ProductsService {
     };
   }
 
-  async getAllProducts(): Promise<AllProducts> {
-    const allProducts = await Product.find();
+  async getAllProducts(itemsOnPage, page, category) {
+    let maxItemsOnPage = itemsOnPage;
+    let currentPage = page;
+    let allProducts;
+    let totalPages;
 
-    if (allProducts.length <= 0) {
+    if (page === 0) {
+      currentPage = 1;
+    }
+
+    if (itemsOnPage === 0) {
+      maxItemsOnPage = 1;
+    }
+
+    if (category === "ALL") {
+      const [, pages] = await Product.findAndCount();
+      allProducts = await Product.find({
+        skip: Number(maxItemsOnPage * (currentPage - 1)),
+        take: itemsOnPage
+      });
+      totalPages = Math.ceil(pages / maxItemsOnPage);
       return {
-        message: "No products found",
-        status: false
+        totalPages,
+        allProducts,
+        status: true
       };
     }
 
+    const [, pages] = await Product.findAndCount({
+      where: { productCategory: category }
+    });
+    allProducts = await Product.find({
+      where: { productCategory: category },
+      skip: Number(maxItemsOnPage * (currentPage - 1)),
+      take: itemsOnPage
+    });
+
+    totalPages = Math.ceil(pages / maxItemsOnPage);
+
     return {
       allProducts,
-      status: true
+      status: true,
+      totalPages
     };
   }
 
@@ -129,5 +159,11 @@ export class ProductsService {
     return {
       status: true
     };
+  }
+
+  mostTimeBought() {
+    return Product.find({
+      order: { boughtTimes: "desc" }
+    });
   }
 }

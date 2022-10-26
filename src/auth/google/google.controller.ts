@@ -14,7 +14,11 @@ export class GoogleController {
   @Get("/")
   @UseGuards(GoogleAuth)
   async googleLogin(@Person() obj: any) {
-    return obj;
+    try {
+      return obj;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @Get("/redirect")

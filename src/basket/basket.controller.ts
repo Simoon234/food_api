@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Res, UseGuards } from "@nes
 import { BasketService } from "./basket.service";
 import { BasketReturnValue } from "../types";
 import { JwtGuard } from "../auth/guards/jwt.guard";
+import { Person } from "../decorators/person.decorator";
 
 @Controller("basket")
 export class BasketController {
@@ -18,9 +19,10 @@ export class BasketController {
     return this.basketService.addToBasket(userId, productId, quantity);
   }
 
-  @Get("/get-all/:id")
-  findAll(@Param("id") id: string) {
-    return this.basketService.getBasket(id);
+  @UseGuards(JwtGuard)
+  @Get("/get-all")
+  findAll(@Person() person: any) {
+    return this.basketService.getBasket(person);
   }
 
   @UseGuards(JwtGuard)
@@ -30,19 +32,32 @@ export class BasketController {
   }
 
   @UseGuards(JwtGuard)
-  @Delete("/delete-product/:basketId/:userId")
-  remove(@Param("userId") userId: string, @Param("basketId") basketId: string) {
-    return this.basketService.removeProductFromBasket(userId, basketId);
+  @Delete("/delete-product/:basketId/")
+  remove(@Person() person: any, @Param("basketId") basketId: string) {
+    return this.basketService.removeProductFromBasket(person, basketId);
   }
 
+  @UseGuards(JwtGuard)
   @Get("checkout-payment/:id")
-  checkout(@Res() res: any, @Param("id") id: string) {
-    return this.basketService.checkout(res, id);
+  checkout(@Res() res: any, @Person() person: any) {
+    return this.basketService.checkout(res, person);
   }
 
   @UseGuards(JwtGuard)
   @Get("/clear-basket/:userId")
   clearBasket(@Param("userId") userId: string) {
     return this.basketService.clearBasket(userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("/increaseQuantity/:id")
+  increaseQuantity(@Person() user: any, @Param("id") id: string) {
+    return this.basketService.increaseQuantity(user, id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get("/decreaseQuantity/:id")
+  decreaseQuantity(@Person() user: any, @Param("id") id: string) {
+    return this.basketService.decreaseQuantity(user, id);
   }
 }

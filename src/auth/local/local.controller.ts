@@ -16,6 +16,12 @@ export class LocalController {
     return this.localService.register(customer);
   }
 
+  @UseGuards(JwtGuard)
+  @Get("/check")
+  async checkAuthentication(@Person() person: User) {
+    return this.localService.checkAuthentication(person);
+  }
+
   @HttpCode(200)
   @Post("/login")
   log(@Body() log: LogDto, @Res() res: Response): Promise<void> {
@@ -24,8 +30,10 @@ export class LocalController {
 
   @UseGuards(JwtGuard)
   @Get("/logout")
-  logout(@Person() person: PersonInterface, @Res() res: Response): Promise<void> {
-    console.log(person);
+  logout(
+    @Person() person: PersonInterface,
+    @Res() res: Response
+  ): Promise<void> {
     return this.localService.logout(person, res);
   }
 }

@@ -1,6 +1,7 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Categories } from "../../types";
 import { BasketEntity } from "../../basket/entities/basket.entity";
+import { Customer } from "../../customers/entities/customer.entity";
 
 @Entity()
 export class Product extends BaseEntity {
@@ -35,7 +36,13 @@ export class Product extends BaseEntity {
   productAddedToFavourite: number;
 
   @Column()
+  boughtTimes: number;
+
+  @Column()
   productImage: string;
+
+  @ManyToOne(() => Customer, (entity) => entity.favorites)
+  fav: Customer;
 
   @OneToMany(() => BasketEntity, (entity) => entity.productItems)
   productsInBasket: BasketEntity[];

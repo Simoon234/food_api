@@ -4,7 +4,7 @@ import { Response } from "express";
 export const logout = async (person, res: Response) => {
   try {
     const customer = await Customer.findOne({
-      where: { email: person.email }
+      where: { email: person.email, id: person.id }
     });
     customer.accessToken = null;
     await customer.save();

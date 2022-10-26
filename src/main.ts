@@ -3,12 +3,12 @@ import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
 import * as cookie from "cookie-parser";
-import { serverHost } from "../db-config";
+import { origin, serverHost } from "../db-config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: process.env.ORIGIN,
+    origin: [origin, "https://checkout.stripe.com"],
     credentials: true
   });
 

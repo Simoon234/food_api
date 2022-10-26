@@ -6,8 +6,8 @@ import { JwtModule } from "@nestjs/jwt";
 import * as dotenv from "dotenv";
 import { PassportModule } from "@nestjs/passport";
 import { SECRET_JWT_KEY } from "../../db-config";
-import { LocalModule } from "./local/local.module";
 import { GoogleService } from "./google/google.service";
+import { LocalModule } from "./local/local.module";
 
 dotenv.config();
 

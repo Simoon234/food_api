@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Customer } from "src/customers/entities/customer.entity";
-import { PersonInterface, User } from "../../types";
+import { PersonInterface, Role, User } from "../../types";
 import { hashPassword, verifyPassword } from "../../utils/hashPassword";
 import { LogDto } from "./dto/log.dto";
 import { Response } from "express";
@@ -58,33 +58,53 @@ export class LocalService {
       if (!comparePwd)
         throw new HttpException("Password do not match", HttpStatus.CONFLICT);
 
-      const accessToken = token(
+      const { accessToken } = token(
         await generateToken(findUser),
         findUser.id,
         findUser.email
       );
 
-
       res
-        .cookie("jwt", accessToken.accessToken, {
+        .cookie("jwt", accessToken, {
           secure: false,
           domain: "localhost",
           httpOnly: true
         })
         .json({
           success: true,
-          user: {
-            id: findUser.id,
-            email: findUser.email,
-            role: findUser.roles
-          }
+          findUser
         });
     } catch (err) {
-      console.error(err);
+      res.json({ err });
     }
   }
 
   async logout(person: PersonInterface, res: Response) {
     return logout(person, res);
+  }
+
+  async checkAuthentication(person: any) {
+    let user;
+    let resUser;
+    if (person.role === Role.customer) {
+      user = await Customer.findOne({ where: { id: person.id } });
+      resUser = {
+        ...user
+      };
+    }
+
+    if (person.role === Role.admin) {
+      user = await Customer.findOne({ where: { id: person.id } });
+      resUser = {
+        ...user
+      };
+    }
+
+    return {
+      success: true,
+      role: person.role,
+      id: person.id,
+      user: resUser
+    };
   }
 }

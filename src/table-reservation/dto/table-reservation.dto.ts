@@ -1,13 +1,15 @@
-import {IsDate, IsNumber, IsString} from "class-validator";
+import { IsDateString, IsNumber, IsString } from "class-validator";
 
 export class TableReservationDto {
+  @IsString()
+  password: string;
 
-    @IsString()
-    password: string;
+  @IsNumber()
+  chosenNumberOfTable: number;
 
-    @IsNumber()
-    chosenNumberOfTable: number;
+  @IsDateString()
+  reservationDate: string;
 
-    @IsDate()
-    reservationDate: Date;
+  @IsString()
+  time: string;
 }

@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Customer } from 'src/customers/entities/customer.entity';
-import { Reservation } from './entity/reservations.entity';
-import { hashPassword } from '../utils/hashPassword';
-import { TableReservationDto } from './dto/table-reservation.dto';
-import { ReservationDetails } from './entity/reservation-details.entity';
-import { Res } from '../types';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Customer } from "src/customers/entities/customer.entity";
+import { Reservation } from "./entity/reservations.entity";
+import { hashPassword } from "../utils/hashPassword";
+import { TableReservationDto } from "./dto/table-reservation.dto";
+import { ReservationDetails } from "./entity/reservation-details.entity";
+import { Res } from "../types";
 
 @Injectable()
 export class TableReservationService {
@@ -61,20 +61,18 @@ export class TableReservationService {
   }
 
   async reserveTable(
-    id: string,
-    { chosenNumberOfTable, password, reservationDate }: TableReservationDto,
+    person: any,
+    {
+      chosenNumberOfTable,
+      password,
+      reservationDate,
+      time
+    }: TableReservationDto
   ) {
-    const user = await Customer.findOne({ where: { id } });
-    let hashPwd = '';
+    const user = await Customer.findOne({ where: { id: person.id } });
+    let hashPwd = "";
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
-
-    if (chosenNumberOfTable !== (2 || 4 || 6)) {
-      throw new HttpException(
-        'We do not have that kind of table..Available tables are [2, 4, 6]',
-        HttpStatus.NOT_FOUND,
-      );
     }
 
     hashPwd = await hashPassword(password);
@@ -82,6 +80,7 @@ export class TableReservationService {
     newReservation.reservationPassword = hashPwd;
     newReservation.reservedBy = user;
     newReservation.reservationDate = reservationDate;
+    newReservation.time = time;
     newReservation.tableType = chosenNumberOfTable;
 
     const getAllReservations = await Reservation.find({

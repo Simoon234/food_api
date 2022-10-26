@@ -11,9 +11,8 @@ function cookieExtract(req: any): null | string {
   return req && req.cookies ? req.cookies?.jwt ?? null : null;
 }
 
-
 @Injectable()
-export class JsonAuthStrategy extends PassportStrategy(Strategy, "jwt") {
+export class JsonAuthStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: cookieExtract,
@@ -27,16 +26,14 @@ export class JsonAuthStrategy extends PassportStrategy(Strategy, "jwt") {
       where: { accessToken: payload.id }
     });
 
+    if (!payload && !payload.id) {
+      return done(new UnauthorizedException(), false);
+    }
+
     if (!customers) {
       return done(new UnauthorizedException(), false);
     }
 
-    done(null, {
-      id: customers.id,
-      email: customers.email,
-      firstName: customers.firstName,
-      lastName: customers.lastName,
-      role: customers.roles
-    });
+    done(null, customers);
   }
 }

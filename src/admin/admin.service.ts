@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { Reservation } from "../table-reservation/entity/reservations.entity";
 import { Stripe } from "stripe";
+import { ShopDetailsEntity } from "./entity/shop-details.entity";
+import { ShopDto } from "./dto/shop.dto";
+import { locationHandler } from "../utils/location";
 
 @Injectable()
 export class AdminService {
@@ -103,5 +106,23 @@ export class AdminService {
       status: true,
       message: "Coupon removed"
     };
+  }
+
+  async shopDetails() {
+    return await ShopDetailsEntity.find();
+  }
+
+  async createShopDetails({ address, email, hours, phone, city }: ShopDto) {
+    const shop = new ShopDetailsEntity();
+    shop.email = email;
+    shop.address = address;
+    shop.phone = phone;
+    shop.hours = hours;
+    shop.city = city;
+
+    const location = await locationHandler({ city, address });
+    shop.lon = Number(location.lon);
+    shop.lat = Number(location.lat);
+    await shop.save();
   }
 }

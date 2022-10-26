@@ -4,26 +4,25 @@ import { BasketReturnValue, FindOneInterface, Res } from "../types";
 import { Product } from "../products/entities/product.entity";
 import { Customer } from "src/customers/entities/customer.entity";
 import { Stripe } from "stripe";
-import { AdminService } from "src/admin/admin.service";
 
 @Injectable()
 export class BasketService {
-  constructor(
-    @Inject("STRIPE_CLIENT") private stripe: Stripe,
-    private adminService: AdminService
-  ) {
+  constructor(@Inject("STRIPE_CLIENT") private stripe: Stripe) {
   }
 
   private static basketFilter(obj: BasketEntity) {
     return {
-      id: obj.id,
+      basketId: obj.id,
       quantity: obj.quantity,
-      product: {
-        id: obj.productItems.id,
-        productName: obj.productItems.productName,
-        productCategory: obj.productItems.productCategory,
-        productPrice: obj.productItems.productPrice,
-        productImage: obj.productItems.productImage
+      id: obj.productItems.id,
+      productName: obj.productItems.productName,
+      productCategory: obj.productItems.productCategory,
+      productPrice: obj.productItems.productPrice,
+      productImage: obj.productItems.productImage,
+      boughtTimes: obj.productItems.boughtTimes,
+      user: {
+        id: obj.user.id,
+        email: obj.user.email
       }
     };
   }
@@ -70,15 +69,16 @@ export class BasketService {
     await productItem.save();
     return {
       quantity,
-      userId: user.id,
-      productId: productItem.id,
-      price: productItem.productPrice
+      id: productItem.id,
+      productPrice: productItem.productPrice,
+      productImage: productItem.productImage,
+      productName: productItem.productName
     };
   }
 
-  async getBasket(id) {
+  async getBasket(person) {
     const user = await Customer.findOne({
-      where: { id }
+      where: { id: person.id }
     });
 
     if (!user) {
@@ -86,9 +86,11 @@ export class BasketService {
     }
     const basket = await BasketEntity.find({
       where: {
-        user: user as unknown as FindOneInterface
+        user: {
+          id: user.id
+        }
       },
-      relations: ["productItems"]
+      relations: ["productItems", "user"]
     });
 
     const totalPrice = basket
@@ -97,7 +99,6 @@ export class BasketService {
       .toFixed(2);
 
     return {
-      status: true,
       basket: basket.map((item) => BasketService.basketFilter(item)),
       totalPrice
     };
@@ -123,9 +124,8 @@ export class BasketService {
       .toFixed(2);
   }
 
-  async checkout(res: any, id: string) {
-    const { basket } = await this.getBasket(id);
-
+  async checkout(res: any, person: any) {
+    const { basket } = await this.getBasket(person.id);
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ["card", "blik"],
       line_items: basket.map((item) => {
@@ -133,10 +133,10 @@ export class BasketService {
           price_data: {
             currency: "pln",
             product_data: {
-              name: item.product.productName,
-              images: [item.product.productImage]
+              name: item.productName,
+              images: [item.productImage]
             },
-            unit_amount: item.product.productPrice * 100,
+            unit_amount: item.productPrice * 100,
             tax_behavior: "exclusive"
           },
           quantity: item.quantity
@@ -169,7 +169,7 @@ export class BasketService {
                 value: 7
               }
             }
-          }
+          },
         },
         {
           shipping_rate_data: {
@@ -190,24 +190,22 @@ export class BasketService {
                 value: 1
               }
             }
-          }
-        }
+          },
+        },
       ],
       allow_promotion_codes: true,
       mode: "payment",
-      success_url: `https://wp.pl/success.html`,
-      cancel_url: `https://onet.pl`
+      success_url: "http://localhost:3000",
+      cancel_url: "http://localhost:4242/cancel.html"
     });
-
-    await this.clearBasket(id);
-    res.redirect(303, session.url);
+    const { id } = basket.find((item) => item.id);
+    await this.updateProductBought(id);
+    await this.clearBasket(person.id);
+    res.json({ success: true, url: session.url });
   }
 
-  async removeProductFromBasket(
-    userId: string,
-    basketId: string
-  ): Promise<Res> {
-    const user = await Customer.findOne({ where: { id: userId } });
+  async removeProductFromBasket(person: any, basketId: string): Promise<Res> {
+    const user = await Customer.findOne({ where: { id: person.id } });
 
     if (!user) {
       throw new HttpException("No user found", HttpStatus.NOT_FOUND);
@@ -262,5 +260,39 @@ export class BasketService {
         status: true
       };
     }
+  }
+
+  async updateProductBought(id: string) {
+    const findProd = await Product.findOne({ where: { id } });
+    findProd.boughtTimes += 1;
+    await findProd.save();
+  }
+
+  async increaseQuantity(user: any, id: string) {
+    const itemsInBasket = await BasketEntity.findOne({
+      where: {
+        user,
+        productItems: { id }
+      },
+      relations: ["productItems", "user"]
+    });
+    itemsInBasket.quantity++;
+    await itemsInBasket.save();
+
+    return itemsInBasket;
+  }
+
+  async decreaseQuantity(user: any, id: string) {
+    const itemsInBasket = await BasketEntity.findOne({
+      where: {
+        user,
+        productItems: { id }
+      },
+      relations: ["productItems", "user"]
+    });
+    itemsInBasket.quantity--;
+    await itemsInBasket.save();
+
+    return itemsInBasket;
   }
 }
